@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <title>p5.js Accelerometer + Gyroscope</title>
+  <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+  
+  <!-- p5.js libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.js"></script>
+  
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background: #eef9ff;
+      font-family: sans-serif;
+    }
+
+    #request {
+      display: none;              /* hidden by default */
+      height: 45px;
+      width: 250px;
+      margin: 40px auto;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007aff;
+      color: white;
+      cursor: pointer;
+    }
+
+    #request:hover {
+      background-color: #005fcc;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- This button will only appear on iPhones -->
+  <button id="request">Tap to enable motion / gyro</button>
+ <!-- your p5.js sketch -->
+  <script src="sketch.js"></script>
+  <script>
+    const btn = document.getElementById("request");
+
+    // If iPhone-style permission is needed
+    if (
+      typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function"
+    ) {
+      // Show the button
+      btn.style.display = "block";
+
+      btn.addEventListener("click", () => {
+        // Ask for permission to use motion sensors
+        Promise.all([
+          DeviceMotionEvent.requestPermission(),
+          DeviceOrientationEvent.requestPermission(),
+        ])
+          .then(([motionPerm, orientPerm]) => {
+            if (motionPerm === "granted" && orientPerm === "granted") {
+              startMotionListeners();
+              btn.style.display = "none"; // hide button after approval
+            } else {
+              alert("Motion access was not granted. Please try again.");
+            }
+          })
+          .catch(console.error);
+      });
+    } else {
+      // Android / Desktop — no special permission needed
+      startMotionListeners();
+      btn.style.display = "none";
+    }
+  </script>
+
+ 
+
+
+</body></html>
